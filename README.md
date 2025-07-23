@@ -27,15 +27,107 @@ O sistema permitirá registrar:
 
 O banco de dados é composto pelas seguintes tabelas:
 
-- `Cliente`
-- `Veiculo`
-- `Equipe`
-- `Mecanico`
-- `Ordem_Servico`
-- `Servico`
-- `Peca`
-- `OS_Servico` (tabela associativa)
-- `OS_Peca` (tabela associativa)
+### Tabela: Cliente
+
+| Campo     | Tipo        | Restrições        |
+|-----------|-------------|-------------------|
+| cpf       | CHAR(11)    | PRIMARY KEY       |
+| nome      | VARCHAR(100)| NOT NULL          |
+| telefone  | VARCHAR(15) |                   |
+| endereco  | VARCHAR(150)|                   |
+
+---
+
+### Tabela: Veiculo
+
+| Campo        | Tipo        | Restrições             |
+|--------------|-------------|------------------------|
+| placa        | CHAR(7)     | PRIMARY KEY            |
+| modelo       | VARCHAR(50) |                        |
+| marca        | VARCHAR(50) |                        |
+| ano          | INT         |                        |
+| cor          | VARCHAR(30) |                        |
+| cpf_cliente  | CHAR(11)    | FOREIGN KEY → Cliente  |
+
+---
+
+### Tabela: Equipe
+
+| Campo         | Tipo        | Restrições    |
+|---------------|-------------|---------------|
+| id_equipe     | INT         | PRIMARY KEY   |
+| nome          | VARCHAR(50) |               |
+| data_criacao  | DATE        |               |
+
+---
+
+### Tabela: Mecanico
+
+| Campo        | Tipo         | Restrições            |
+|--------------|--------------|-----------------------|
+| id_mecanico  | INT          | PRIMARY KEY           |
+| nome         | VARCHAR(100) |                       |
+| endereco     | VARCHAR(150) |                       |
+| especialidade| VARCHAR(100) |                       |
+| id_equipe    | INT          | FOREIGN KEY → Equipe  |
+
+---
+
+### Tabela: Ordem_Servico
+
+| Campo                | Tipo         | Restrições             |
+|----------------------|--------------|------------------------|
+| id_os                | INT          | PRIMARY KEY            |
+| data_abertura        | DATE         |                        |
+| data_entrega_prevista| DATE         |                        |
+| status               | VARCHAR(20)  |                        |
+| autorizacao          | BOOLEAN      |                        |
+| placa_veiculo        | CHAR(7)      | FOREIGN KEY → Veiculo  |
+| id_equipe            | INT          | FOREIGN KEY → Equipe   |
+
+---
+
+### Tabela: Servico
+
+| Campo          | Tipo         | Restrições    |
+|----------------|--------------|---------------|
+| id_servico     | INT          | PRIMARY KEY   |
+| descricao      | VARCHAR(200) |               |
+| valor_mao_obra | DECIMAL(10,2)|               |
+
+---
+
+### Tabela: Peca
+
+| Campo     | Tipo         | Restrições    |
+|-----------|--------------|---------------|
+| id_peca   | INT          | PRIMARY KEY   |
+| nome      | VARCHAR(100) |               |
+| valor     | DECIMAL(10,2)|               |
+
+---
+
+### Tabela: OS_Servico (relacionamento N:N)
+
+| Campo       | Tipo         | Restrições                         |
+|-------------|--------------|------------------------------------|
+| id_os       | INT          | FOREIGN KEY → Ordem_Servico        |
+| id_servico  | INT          | FOREIGN KEY → Servico              |
+| quantidade  | INT          | DEFAULT 1                          |
+| valor_total | DECIMAL(10,2)| Calculado ou armazenado            |
+| PRIMARY KEY | (id_os, id_servico) |                            |
+
+---
+
+### Tabela: OS_Peca (relacionamento N:N)
+
+| Campo       | Tipo         | Restrições                         |
+|-------------|--------------|------------------------------------|
+| id_os       | INT          | FOREIGN KEY → Ordem_Servico        |
+| id_peca     | INT          | FOREIGN KEY → Peca                 |
+| quantidade  | INT          | DEFAULT 1                          |
+| valor_total | DECIMAL(10,2)| Calculado ou armazenado            |
+| PRIMARY KEY | (id_os, id_peca)   |                              |
 
 ##  Estrutura do Banco de Dados (SQL)
 
